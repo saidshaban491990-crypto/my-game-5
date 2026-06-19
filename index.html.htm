@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي النظم البيئية المائية - أ. سعيد شعبان</title>
+    <style>
+        :root { --primary: #1e3a8a; --accent: #d4af37; --success: #059669; --danger: #dc2626; --bg: #f0f4f8; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #cbd5e1; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; padding: 15px; }
+        .stages-nav { display: flex; width: 100%; max-width: 900px; background: white; border-radius: 15px; margin-bottom: 15px; border: 3px solid var(--primary); overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .stage-item { flex: 1; padding: 15px 5px; font-size: 13px; font-weight: bold; text-align: center; color: #475569; border-left: 1px solid #e2e8f0; transition: all 0.4s ease; }
+        .stage-item.current { background: var(--accent); color: #1e3a8a; }
+        .stage-item.done { background: var(--primary); color: white; opacity: 0.9; }
+        .main-card { width: 100%; max-width: 900px; background: white; border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 4px solid var(--primary); overflow: hidden; position: relative; }
+        .top-nav-bar { background: linear-gradient(135deg, var(--primary), #1e40af); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--accent); }
+        .section-label { font-size: 24px; font-weight: 900; margin: 0; }
+        .content { padding: 40px; text-align: center; min-height: 450px; }
+        .teacher-img { width: 120px; height: 120px; border-radius: 50%; border: 5px solid var(--accent); object-fit: cover; }
+        .intro-name { font-size: 26px; font-weight: 900; color: var(--primary); margin: 5px 0; }
+        .q-card { background: var(--bg); border-radius: 25px; padding: 35px; margin-bottom: 30px; border: 2px dashed var(--primary); min-height: 160px; display: flex; align-items: center; justify-content: center; }
+        .q-text { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1.7; }
+        .btn-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media(min-width: 600px) { .btn-grid { grid-template-columns: 1fr 1fr; } }
+        .btn-opt { background: white; border: 3px solid #e2e8f0; padding: 20px; border-radius: 20px; font-size: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; color: var(--primary); text-align: right; }
+        .btn-opt:hover { border-color: var(--accent); background: #f8fafc; }
+        .correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
+        .wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
+        input { width: 100%; max-width: 450px; padding: 18px; border-radius: 15px; border: 3px solid #cbd5e1; text-align: center; font-size: 22px; margin-bottom: 25px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-main { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 20px 70px; border-radius: 20px; font-size: 26px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { transform: scale(1.05); }
+        .footer-identity { background: #f8fafc; padding: 15px; border-top: 3px solid var(--accent); color: var(--primary); font-weight: 800; font-size: 18px; display: flex; justify-content: center; align-items: center; gap: 20px; }
+        .screen { display: none; }
+        .active-screen { display: block; }
+        #feedback { display: none; margin-top: 20px; padding: 15px; border-radius: 15px; font-weight: bold; background: #ecfdf5; color: #065f46; font-size: 18px; border-right: 8px solid var(--success); text-align: right; }
+    </style>
+</head>
+<body>
+
+    <div class="stages-nav" id="stagesNav" style="display:none;">
+        <div class="stage-item">صواب/خطأ</div>
+        <div class="stage-item">بم تفسر</div>
+        <div class="stage-item">ما النتائج</div>
+        <div class="stage-item">ما المقصود</div>
+        <div class="stage-item">أكمل</div>
+    </div>
+
+    <audio id="sCor" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
+    <audio id="sErr" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+    <audio id="vCor" src="https://archive.org/download/correct_202604/correct.mp3" preload="auto"></audio>
+    <audio id="vErr" src="https://archive.org/download/correct_202604/wrong.mp3" preload="auto"></audio>
+
+    <div class="main-card">
+        <div class="top-nav-bar"><p class="section-label">تحدي النظم البيئية المائية 🌊</p></div>
+        <div class="content">
+            <div id="scr-1" class="screen active-screen">
+                <img src="https://i.ibb.co/gKFwNMZ/image.png" class="teacher-img">
+                <p class="intro-name">أ. سعيد شعبان</p>
+                <input type="text" id="uName" placeholder="أدخل اسمك الثلاثي...">
+                <button id="startBtn" class="btn-main">ابدأ التحدي الآن 🏆</button>
+            </div>
+            <div id="scr-2" class="screen">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; color: var(--primary); font-size: 20px;">
+                    <div id="q-count">السؤال: 1 / 50</div>
+                    <div id="s-val">النقاط: 0</div>
+                </div>
+                <div class="q-card"><div id="qText" class="q-text"></div></div>
+                <div id="feedback"></div>
+                <div class="btn-grid" id="options"></div>
+            </div>
+            <div id="scr-3" class="screen">
+                <h2 style="color: var(--accent); font-size: 35px;">تم التحدي بنجاح!</h2>
+                <div id="fName" style="font-size:26px; font-weight:bold;"></div>
+                <div id="fScore" style="font-size:80px; font-weight:900; color:var(--primary); margin: 20px 0;"></div>
+                <div id="motivationMsg"></div>
+                <p id="sendingMsg" style="color:var(--primary); font-weight:bold;">جاري حفظ النتيجة...</p>
+                <button class="btn-main" onclick="location.reload()">مرة أخرى 🔄</button>
+            </div>
+        </div>
+        <div class="footer-identity"><span>إعداد: أ. سعيد شعبان</span> | <span>📞 01551625493</span></div>
+    </div>
+
+<script>
+let score = 0, cur = 0, uName = "", startTime;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwYnfNGajC14O8YDBVStJylmj-E6azdRUrigPdivddLXjQrb8dKJSK53_rEonzZh-wM8w/exec";
+const stageBoundaries = [11, 22, 33, 38, 50];
+
+const quiz = [
+    {q: "تميز أنهار قارة آسيا بأنها أكثر تنوعاً بيولوجياً من أنهار قارة أوروبا.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "يعد نهر 'الدانوب' ثالث أنهار العالم من حيث التنوع البيولوجي.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، نهر ميكونج هو ثالث العالم"},
+    {q: "تعتبر بحيرة 'بايكال' أعمق بحيرة في العالم وتقع في قارة آسيا.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تختفي الشعاب المرجانية من سواحل قارة أوروبا تماماً نتيجة موقعها الفلكي.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "يعد خليج البنغال في آسيا أكبر خليج في العالم.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "يوجد نظام 'المانجروف' في قارة أوروبا بكثافة عالية وارتفاعات كبيرة.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، يختفي من أوروبا ويوجد في آسيا"},
+    {q: "تعتبر قارة أوروبا أكثر قارات العالم تعرضاً للكوارث الطبيعية والأعاصير.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، قارة آسيا هي الأكثر تعرضاً"},
+    {q: "تعد 'الأعاصير المدارية' ظاهرة مناخية تنبعث من دوامات هوائية بطيئة الحركة.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، دوامات تتحرك بسرعة شديدة"},
+    {q: "تحدث 'الانهيارات الجليدية' بوضوح في مناطق جبال الألب بأوروبا وجبال الهيمالايا بآسيا.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "أصدر الاتحاد الأوروبي قانوناً في عام 2024م لاستعادة النظم البيئية البرية والمائية.", opts: ["صواب", "خطأ"], ans: 0, fb: "صواب"},
+    {q: "تقع محمية 'دلتا الدانوب' في قارة آسيا وتعد مركزاً للتنوع البيولوجي.", opts: ["صواب", "خطأ"], ans: 1, fb: "خطأ، تقع في أوروبا"},
+    {q: "تميز أنهار آسيا بأنها أكثر تنوعاً بيولوجياً لـ:", opts: ["شدة برودتها", "تنوع المناخ واتساع البيئات المائية الدافئة", "قلة الأمطار", "جفاف منابعها"], ans: 1, fb: "تنوع المناخ واتساع البيئات المائية الدافئة"},
+    {q: "تسمية بحيرة 'بايكال' بـ 'لؤلؤة سيبيريا' يرجع لـ:", opts: ["تلوث مياهها", "نقائها الشديد وكونها من أصفى البحيرات", "شدة ملوحتها", "صغر مساحتها"], ans: 1, fb: "نقائها الشديد وكونها من أصفى البحيرات"},
+    {q: "الأهمية البيئية الكبرى لنظم الأراضي الرطبة العذبة تكمن في:", opts: ["زيادة التلوث", "امتصاص ثاني أكسيد الكربون وتقليل الاحتباس الحراري", "بناء السدود", "تجفيف المياه"], ans: 1, fb: "امتصاص ثاني أكسيد الكربون وتقليل الاحتباس الحراري"},
+    {q: "يتسم البحر المتوسط بتنوع بيولوجي كبير يرجع لـ:", opts: ["قلة الأنهار", "كثرة الأنهار العذبة التي تصب فيه", "جفاف مناخه", "شدة ملوحته"], ans: 1, fb: "كثرة الأنهار العذبة التي تصب فيه"},
+    {q: "نمو الشعاب المرجانية في سواحل المناطق المدارية بآسيا لـ:", opts: ["برودة المياه", "توافر الخصائص المناخية الملائمة كدفء المياه", "شدة الرياح", "عمق المياه الكبير"], ans: 1, fb: "توافر الخصائص المناخية الملائمة كدفء المياه"},
+    {q: "تعرض مساحات من غابات المانجروف للتدهور نتيجة الأنشطة البشرية مثل:", opts: ["الزراعة", "الصيد الجائر وإزالة الغابات لأغراض التنمية", "سقوط الثلوج", "تحرك الجليد"], ans: 1, fb: "الصيد الجائر وإزالة الغابات لأغراض التنمية"},
+    {q: "ندرة الكائنات الحية في بعض أجزاء البحر المتوسط يرجع لـ:", opts: ["نقاء الماء", "التلوث الناتج عن مياه الصرف والنفايات البلاستيكية", "كثرة الأسماك", "انخفاض الحرارة"], ans: 1, fb: "التلوث الناتج عن مياه الصرف والنفايات البلاستيكية"},
+    {q: "ترتفع مخاطر الانهيارات الجليدية في جبال الهيمالايا والألب لـ:", opts: ["قلة الثلوج", "الانحدار الشديد للقمم الجبلية العالية", "استواء السطح", "حرارة الجو"], ans: 1, fb: "الانحدار الشديد للقمم الجبلية العالية"},
+    {q: "اهتمام دول آسيا بمبادرات حماية البيئة (مثل مبادرة الهند) يهدف لـ:", opts: ["زيادة التعدين", "تقليل مستويات التلوث واستعادة التنوع البيولوجي", "بناء المصانع", "تجفيف البحيرات"], ans: 1, fb: "تقليل مستويات التلوث واستعادة التنوع البيولوجي"},
+    {q: "اعتبار محمية 'دلتا الدانوب' مركزاً رئيسياً للحفاظ على التنوع لـ:", opts: ["جفافها", "تعدد أنواع الطيور المهاجرة والكائنات الحية بها", "كثرة السكان", "صغر مساحتها"], ans: 1, fb: "تعدد أنواع الطيور المهاجرة والكائنات الحية بها"},
+    {q: "يختفي نظام المانجروف من سواحل قارة أوروبا تماماً لـ:", opts: ["كثرة الجزر", "موقعها الفلكي في المناطق المعتدلة والباردة", "شدة الحرارة", "قربها من خط الاستواء"], ans: 1, fb: "موقعها الفلكي في المناطق المعتدلة والباردة"},
+    {q: "إلقاء النفايات البلاستيكية ومياه الصرف في البحر المتوسط أدى لـ:", opts: ["زيادة التنوع", "تهديد الكائنات البحرية ونقص التنوع البيولوجي", "صفاء المياه", "نمو المرجان"], ans: 1, fb: "تهديد الكائنات البحرية ونقص التنوع البيولوجي"},
+    {q: "تعرض الغابات الصنوبرية لعواصف شديدة في شمال أوروبا أدى لـ:", opts: ["نمو الأشجار", "اقتلاع الأشجار وتكسيرها", "زيادة الأمطار", "هجرة الأسماك"], ans: 1, fb: "اقتلاع الأشجار وتكسيرها"},
+    {q: "ذوبان الجليد في نظام التندرا خلال فصل الصيف أدى لـ:", opts: ["جفاف الأرض", "انتشار المستنقعات والبعوض في تلك المناطق", "تجمد التربة", "ندرة الطحالب"], ans: 1, fb: "انتشار المستنقعات والبعوض في تلك المناطق"},
+    {q: "امتداد قارة آسيا في عروض مدارية (بين 30 شمالاً وجنوباً) أدى لـ:", opts: ["اختفاء المرجان", "نمو الشعاب المرجانية في سواحلها الدافئة", "شدة البرودة", "قلة الأسماك"], ans: 1, fb: "نمو الشعاب المرجانية في سواحلها الدافئة"},
+    {q: "تدهور ونفاد الموارد في نظم الصحاري الباردة نتج عنه:", opts: ["زحام سكاني", "خلو هذه المناطق من السكان تقريباً", "وفرة الأخشاب", "نمو محاصيل"], ans: 1, fb: "خلو هذه المناطق من السكان تقريباً"},
+    {q: "مرور الدائرة القطبية في شمال آسيا وأوروبا أدى لـ:", opts: ["نمو غابات مدارية", "سيادة نظام النظم البيئية الباردة (التندرا والصنوبرية)", "اعتدال الحرارة", "نمو المرجان"], ans: 1, fb: "سيادة نظام النظم البيئية الباردة (التندرا والصنوبرية)"},
+    {q: "التلوث البترولي وتسرب الزيوت في المسطحات المائية أدى لـ:", opts: ["تحسن البيئة", "تدهور النظم البيئية المائية وموت الكائنات", "زيادة الأسماك", "نقاء الهواء"], ans: 1, fb: "تدهور النظم البيئية المائية وموت الكائنات"},
+    {q: "كثرة تعاريج سواحل أوروبا وكثرة الجزر بها أدت لـ:", opts: ["قلة الموانئ", "سهولة إنشاء الموانئ الطبيعية واتصالها بالعالم", "صعوبة الملاحة", "جفاف السواحل"], ans: 1, fb: "سهولة إنشاء الموانئ الطبيعية واتصالها بالعالم"},
+    {q: "استمرار الصيد الجائر في نظم المانجروف بآسيا أدى لـ:", opts: ["زيادة المساحات", "تدهور النظام البيئي وتناقص مساحاته العالمية", "حماية السواحل", "نمو الشعاب"], ans: 1, fb: "تدهور النظام البيئي وتناقص مساحاته العالمية"},
+    {q: "وصول سرعة الانهيارات الجليدية لأكثر من 300 كم/ساعة أدى لـ:", opts: ["نمو الغابات", "تدمير البنية التحتية ونفوق الحيوانات في طريقها", "اعتدال الجو", "استقرار التربة"], ans: 1, fb: "تدمير البنية التحتية ونفوق الحيوانات في طريقها"},
+    {q: "إصدار الاتحاد الأوروبي للقوانين البيئية الصارمة يهدف لـ:", opts: ["زيادة التلوث", "ضمان استدامة الموارد المائية وحمايتها للأجيال", "منع الملاحة", "تجفيف الأنهار"], ans: 1, fb: "ضمان استدامة الموارد المائية وحمايتها للأجيال"},
+    {q: "ظاهرة مناخية متطرفة تنتج عن دوامات هوائية تتحرك بسرعة شديدة من البحر لليابس:", opts: ["السيول", "الأعاصير المدارية", "الانهيارات الجليدية", "الجفاف"], ans: 1, fb: "الأعاصير المدارية"},
+    {q: "حركة سريعة لمساحات كبيرة من الجليد من المناطق المرتفعة إلى المنخفضة:", opts: ["الأعاصير", "الانهيارات الجليدية", "الفيضانات", "المد البحري"], ans: 1, fb: "الانهيارات الجليدية"},
+    {q: "منطقة يحيط بها اليابس من معظم الجهات وتتصل بالبحر أو المحيط بممر مائي ضيق:", opts: ["الجزيرة", "البحر شبه المغلق", "المحيط", "النهر"], ans: 1, fb: "البحر شبه المغلق"},
+    {q: "نظم بيئية مائية عذبة تفيد في امتصاص الكربون وتقليل الاحتباس الحراري:", opts: ["الشعاب المرجانية", "الأراضي الرطبة العذبة", "البحار المالحة", "الصحاري"], ans: 1, fb: "الأراضي الرطبة العذبة"},
+    {q: "نظام بيئي ساحلي ينمو في المناطق المدارية الدافئة بآسيا ويختفي من أوروبا:", opts: ["النفضية", "نظام المانجروف", "التندرا", "الصنوبرية"], ans: 1, fb: "نظام المانجروف"},
+    {q: "يصب نهر الفولجا (أطول أنهار أوروبا) في بحر:", opts: ["الدانوب", "الراين", "قزوين", "السين"], ans: 2, fb: "بحر قزوين"},
+    {q: "تعد بحيرة بايكال في قارة آسيا أعمق بحيرة ........ في العالم.", opts: ["مالحة", "عذبة", "جافة", "صغيرة"], ans: 1, fb: "عذبة"},
+    {q: "تقع محمية دلتا نهر ........ في قارة أوروبا وتعد مركزاً للتنوع البيولوجي.", opts: ["الفولجا", "الدانوب", "ميكونج", "هوانج هو"], ans: 1, fb: "الدانوب"},
+    {q: "تعرف بحيرة بايكال في آسيا بلقب ........ لنقاء مياهها.", opts: ["لؤلؤة الصين", "لؤلؤة سيبيريا", "جوهرة الهند", "عين العالم"], ans: 1, fb: "لؤلؤة سيبيريا"},
+    {q: "تتركز الأراضي الرطبة في قارة أوروبا بجهة الشمال في الدول:", opts: ["العربية", "الإسكندنافية", "المتوسطية", "الأفريقية"], ans: 1, fb: "الإسكندنافية"},
+    {q: "يعتبر خليج ........ في آسيا أكبر خلجان العالم من حيث المساحة.", opts: ["السويس", "البنغال", "العربي", "عمان"], ans: 1, fb: "البنغال"},
+    {q: "تنمو الشعاب المرجانية في قارة آسيا في منطقتي الخليج العربي و:", opts: ["البحر الأسود", "البحر الأحمر", "بحر الشمال", "المحيط المتجمد"], ans: 1, fb: "البحر الأحمر"},
+    {q: "يتركز التنوع البيولوجي الكبير في البحر المتوسط في الجزء ........ منه.", opts: ["الشرقي", "الغربي", "الشمالي", "الجنوبي"], ans: 1, fb: "الغربي"},
+    {q: "يوجد في قارة آسيا نحو ........ مساحة غابات المانجروف في العالم.", opts: ["ربع", "نصف", "ثلث", "ثلثي"], ans: 1, fb: "نصف"},
+    {q: "تعرف الأعاصير المدارية المدمرة في منطقة جنوب شرق آسيا باسم:", opts: ["تورنيدو", "التيفون", "تسونامي", "الزلازل"], ans: 1, fb: "التيفون"},
+    {q: "أطلقت دولة الصين مبادرة ........ لإصلاح النظم البيئية المائية بها.", opts: ["الشرق الأخضر", "شان شوي", "النهر الجاري", "الحزام والطريق"], ans: 1, fb: "شان شوي"},
+    {q: "تبنت دولة ........ مبادرات ناجحة لاستصلاح الأراضي وإعادة الحياة البرية.", opts: ["الصين", "الهند", "السعودية", "ألمانيا"], ans: 2, fb: "السعودية"}
+];
+
+document.getElementById('startBtn').onclick = function() {
+    uName = document.getElementById('uName').value;
+    if(uName.trim().length < 5) return alert("يرجى كتابة الاسم الثلاثي المعتمد للمشاركة في لوحة الشرف");
+    startTime = Date.now();
+    document.getElementById('scr-1').classList.remove('active-screen');
+    document.getElementById('scr-2').classList.add('active-screen');
+    document.getElementById('stagesNav').style.display = 'flex'; 
+    loadQ();
+};
+
+function loadQ() {
+    const q = quiz[cur];
+    document.getElementById('qText').innerText = q.q;
+    document.getElementById('q-count').innerText = "السؤال: " + (cur+1) + " / " + quiz.length;
+    document.getElementById('feedback').style.display = 'none';
+    
+    let currentStageIdx = stageBoundaries.findIndex(limit => cur < limit);
+    document.querySelectorAll('.stage-item').forEach((item, idx) => {
+        item.classList.remove('current', 'done');
+        if (idx === currentStageIdx) item.classList.add('current');
+        else if (idx < currentStageIdx) item.classList.add('done');
+    });
+
+    const optsDiv = document.getElementById('options');
+    optsDiv.innerHTML = "";
+    q.opts.forEach((o, i) => {
+        const b = document.createElement('button');
+        b.className = 'btn-opt'; 
+        b.innerText = o;
+        b.onclick = () => check(i, b);
+        optsDiv.appendChild(b);
+    });
+}
+
+function check(idx, b) {
+    const q = quiz[cur];
+    const allButtons = document.querySelectorAll('.btn-opt');
+    allButtons.forEach(btn => btn.onclick = null);
+    if(idx === q.ans) {
+        score++; 
+        b.classList.add('correct');
+        sCor.play(); setTimeout(() => { vCor.play(); }, 250); 
+    } else {
+        b.classList.add('wrong');
+        allButtons[q.ans].classList.add('correct'); 
+        sErr.play(); setTimeout(() => { vErr.play(); }, 250);
+    }
+    document.getElementById('feedback').innerText = "💡 تأكيد: " + q.fb;
+    document.getElementById('feedback').style.display = 'block';
+    document.getElementById('s-val').innerText = "النقاط: " + score;
+    setTimeout(() => { cur++; if(cur < quiz.length) loadQ(); else finish(); }, 3500);
+}
+
+function finish() {
+    const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const percentage = (score / quiz.length) * 100;
+    let feedbackMsg = "", feedbackColor = "#1e3a8a";
+    if (percentage >= 90) feedbackMsg = "أداء مذهل! أنت خبير في النظم البيئية المائية 🌊🏆";
+    else if (percentage >= 75) feedbackMsg = "ممتاز جداً يا بطل! مستوى رائع في معرفة البيئات المائية 🌟";
+    else if (percentage >= 50) feedbackMsg = "أداء جيد، أنصحك بمراجعة أنواع المحميات والخصائص المائية 💪";
+    else feedbackMsg = "لا بأس، راجع بنك الأسئلة جيداً وحاول مرة أخرى! 🚩";
+
+    document.getElementById('stagesNav').style.display = 'none';
+    document.getElementById('scr-2').classList.remove('active-screen');
+    document.getElementById('scr-3').classList.add('active-screen');
+    document.getElementById('fName').innerText = uName;
+    document.getElementById('fScore').innerText = score + " / 50";
+    document.getElementById('motivationMsg').innerHTML = `<div style="color:${feedbackColor}; margin:15px 0; font-size:22px; border:3px solid ${feedbackColor}; padding:15px; border-radius:15px; font-weight:bold;">${feedbackMsg}</div>`;
+    
+    const lessonName = "النظم البيئية المائية في قارتي آسيا وأوروبا";
+    const finalUrl = SCRIPT_URL + "?name=" + encodeURIComponent(uName) + "&score=" + encodeURIComponent(score) + "&duration=" + encodeURIComponent(durationSeconds) + "&lesson=" + encodeURIComponent(lessonName);
+    const sender = new Image();
+    sender.src = finalUrl;
+    sender.onload = sender.onerror = () => document.getElementById('sendingMsg').innerText = "✅ تم حفظ نتيجتك بنجاح!";
+}
+</script>
+</body>
+</html>
